@@ -1,0 +1,5 @@
+# Protege archivos de configuración y documentación.
+<FilesMatch "^(config\.php|\.user\.ini|README\.md|\.env.*|Dockerfile|docker-compose\.yml|\.dockerignore)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

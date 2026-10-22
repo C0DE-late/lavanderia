@@ -1,0 +1,41 @@
+# Lavandería: app (PHP + Apache) + base de datos MySQL.
+# Uso:
+#   1. Copia .env.ejemplo como .env y cambia las claves.
+#   2. docker compose up -d --build
+#   3. docker compose exec app php instalar/instalar.php   (solo la primera vez)
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${PUERTO_APP:-8080}:80"
+    environment:
+      DB_HOST: db
+      DB_NOMBRE: ${DB_NOMBRE:-lavanderia}
+      DB_USUARIO: ${DB_USUARIO:-lavanderia}
+      DB_CLAVE: ${DB_CLAVE:?Define DB_CLAVE en el archivo .env}
+    volumes:
+      - fotos:/var/www/html/almacen/fotos
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_NOMBRE:-lavanderia}
+      MYSQL_USER: ${DB_USUARIO:-lavanderia}
+      MYSQL_PASSWORD: ${DB_CLAVE:?Define DB_CLAVE en el archivo .env}
+      MYSQL_ROOT_PASSWORD: ${DB_CLAVE_ROOT:?Define DB_CLAVE_ROOT en el archivo .env}
+      TZ: America/Bogota
+    volumes:
+      - datos:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 10
+
+volumes:
+  datos:   # base de datos (persistente)
+  fotos:   # fotos de los registros (persistente)
