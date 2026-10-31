@@ -27,10 +27,8 @@ return [
     // Dietas: tiempos de comida (la clave se guarda en la base; no la cambies si ya hay registros).
     'tiempos_comida' => [
         'desayuno'     => 'Desayuno',
-        'media_manana' => 'Media mañana',
         'almuerzo'     => 'Almuerzo',
         'cena'         => 'Cena',
-        'nocturno'     => 'Refrigerio nocturno',
     ],
     'dietas_max' => 500, // máximo de dietas de un tipo en una entrega
     // Fotos: se guardan fuera del acceso público y se sirven solo a usuarios con sesión.

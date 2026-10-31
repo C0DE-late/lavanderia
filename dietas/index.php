@@ -54,7 +54,7 @@ pagina('Panel', function () use ($u, $fecha, $hoy, $areas, $dietas, $total, $nov
             <a href="reporte.php?desde=<?= e($fecha) ?>&amp;hasta=<?= e($fecha) ?>">Ver reporte del día</a>
         <?php endif; ?>
     </div>
-    <div class="estado">
+    <div class="estado estado-tres">
         <?php foreach ($CONFIG['tiempos_comida'] as $clave => $nombre): $d = $dietas[$clave] ?? null; ?>
             <?php tarjetaAvance(
                 $nombre,

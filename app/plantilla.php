@@ -82,7 +82,7 @@ function pagina(string $titulo, callable $contenido): void
     <meta name="theme-color" content="#0072BC">
     <title><?= e($titulo) ?> · <?= e($nombre) ?></title>
     <link rel="icon" href="<?= e(url($iconoApp)) ?>" type="image/svg+xml">
-    <link rel="stylesheet" href="<?= e(url('assets/estilos.css?v=7')) ?>">
+    <link rel="stylesheet" href="<?= e(url('assets/estilos.css?v=8')) ?>">
 </head>
 <body class="<?= $u ? 'con-menu' : 'sin-menu' ?><?= $u && $modulo ? ' con-accesos' : '' ?>">
 <?php if ($u): ?>
