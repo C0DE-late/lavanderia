@@ -45,7 +45,7 @@ Una misma área no se puede registrar dos veces en el mismo recorrido, fecha y t
 
 ## Datos de cada registro de dietas
 
-Fecha · Tiempo de comida (desayuno, media mañana, almuerzo, onces, cena, refrigerio nocturno) · Área · Por cada tipo de dieta: pedidas y entregadas · Foto (opcional) · Responsable · Observaciones.
+Fecha · Tiempo de comida (desayuno, media mañana, almuerzo, cena, refrigerio nocturno) · Área · Por cada tipo de dieta: pedidas y entregadas · Foto (opcional) · Responsable · Observaciones.
 
 - Un área se registra una sola vez por tiempo de comida y fecha.
 - Si lo entregado no coincide con lo pedido, las observaciones son obligatorias.

@@ -29,7 +29,6 @@ return [
         'desayuno'     => 'Desayuno',
         'media_manana' => 'Media mañana',
         'almuerzo'     => 'Almuerzo',
-        'onces'        => 'Onces',
         'cena'         => 'Cena',
         'nocturno'     => 'Refrigerio nocturno',
     ],
