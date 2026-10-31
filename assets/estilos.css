@@ -60,7 +60,6 @@ main.contenedor { padding-top: 16px; padding-bottom: 48px; }
 .encabezado::before { content: ""; display: block; height: 4px; background: var(--degradado); }
 .encabezado .fila { min-height: 56px; }
 .marca { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.1rem; text-decoration: none; color: var(--texto); }
-.marca img { border-radius: 8px; }
 .quien { margin-left: auto; font-size: .85rem; color: var(--suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .salir { margin: 0; }
 .menu { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
@@ -152,7 +151,6 @@ tr:last-child td { border-bottom: 0; }
 /* Inicio de sesión */
 .login { max-width: 380px; margin: 8vh auto 0; }
 .login .marca { justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
-.login .logo { display: block; width: min(260px, 80%); height: auto; margin: 0 auto 16px; border-radius: var(--radio); }
 
 @media (max-width: 420px) {
   .area-campos { grid-template-columns: 1fr 1fr; }
