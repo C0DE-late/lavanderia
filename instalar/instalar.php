@@ -1,6 +1,6 @@
 <?php
 /**
- * Instalador: crea la base de datos, las tablas, las áreas y tipos de dieta de ejemplo y un usuario por rol.
+ * Instalador: crea la base de datos, las tablas, los catálogos de ejemplo de cada módulo y un usuario por rol.
  * Uso (desde la consola):  php instalar/instalar.php
  * Solo crea lo que no existe; no borra datos.
  */
@@ -21,7 +21,15 @@ $pdo->exec("USE `{$c['nombre']}`");
 $pdo->exec(file_get_contents(__DIR__ . '/esquema.sql'));
 echo "Base de datos y tablas listas.\n";
 
-// Áreas de ejemplo: edítalas desde la sección Áreas del administrador.
+// Columnas agregadas después de la primera versión (CREATE TABLE IF NOT EXISTS no las crea en tablas que ya existen).
+$hayColumna = $pdo->prepare('SELECT 1 FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = ? AND column_name = ?');
+$hayColumna->execute(['usuarios', 'modulos']);
+if (!$hayColumna->fetchColumn()) {
+    $pdo->exec("ALTER TABLE usuarios ADD modulos SET('ropa', 'dietas') NOT NULL DEFAULT 'ropa,dietas' AFTER rol");
+    echo "Columna de módulos agregada a los usuarios.\n";
+}
+
+// Áreas de ejemplo de lavandería: edítalas en Lavandería → Áreas.
 $areas = [
     'Urgencias', 'Unidad materna y partos', 'Hospitalización adultos', 'Hospitalización pediátrica',
     'Hospitalización ginecológica', 'UCI adulto', 'UCI pediátrica', 'UCI neonatal', 'Cirugía',
@@ -31,9 +39,20 @@ $insArea = $pdo->prepare('INSERT IGNORE INTO areas (nombre, orden) VALUES (?, ?)
 foreach ($areas as $i => $nombre) {
     $insArea->execute([$nombre, ($i + 1) * 10]);
 }
-echo count($areas) . " áreas de ejemplo verificadas.\n";
+echo count($areas) . " áreas de lavandería de ejemplo verificadas.\n";
 
-// Tipos de dieta de ejemplo: edítalos desde la sección Tipos de dieta del administrador.
+// Áreas de ejemplo de dietas (solo las que tienen pacientes): edítalas en Dietas → Áreas.
+$areasDieta = [
+    'Urgencias', 'Unidad materna y partos', 'Hospitalización adultos', 'Hospitalización pediátrica',
+    'Hospitalización ginecológica', 'UCI adulto', 'UCI pediátrica', 'UCI neonatal',
+];
+$insArea = $pdo->prepare('INSERT IGNORE INTO areas_dieta (nombre, orden) VALUES (?, ?)');
+foreach ($areasDieta as $i => $nombre) {
+    $insArea->execute([$nombre, ($i + 1) * 10]);
+}
+echo count($areasDieta) . " áreas de dietas de ejemplo verificadas.\n";
+
+// Tipos de dieta de ejemplo: edítalos en Dietas → Tipos de dieta.
 $tiposDieta = [
     'Normal', 'Blanda', 'Líquida clara', 'Líquida completa', 'Hiposódica', 'Hipoglúcida (diabético)',
     'Hipograsa', 'Hiperproteica', 'Renal', 'Licuada', 'Pediátrica', 'Fórmula infantil',

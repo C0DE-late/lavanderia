@@ -3,9 +3,9 @@
  * Registro de dietas: fecha, tiempo de comida y área; por cada tipo de dieta,
  * cuántas se pidieron y cuántas se entregaron. Foto y observaciones opcionales.
  */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/dietas.php';
-$u = exigirRol('operario', 'supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/dietas.php';
+$u = exigirModulo('dietas');
 
 $hoy = date('Y-m-d');
 // Misma regla que la ropa: el operario registra hoy o ayer; supervisor y administrador, cualquier fecha pasada.
@@ -20,7 +20,7 @@ if (isset($_GET['existentes'])) {
     exit;
 }
 
-$areas = areasActivas();
+$areas = areasDietaActivas();
 $tipos = tiposDietaActivos();
 $errores = [];
 // Después de guardar se conservan la fecha y el tiempo para seguir con la siguiente área.
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 '%s · %s guardado: %d pedidas, %d entregadas.',
                 $nombresArea[$areaId], nombreTiempo($tiempo), $t['pedidas'], $t['entregadas']
             ));
-            redirigir('registrar-dieta.php?' . http_build_query(['fecha' => $fecha, 'tiempo' => $tiempo]));
+            redirigir('registrar.php?' . http_build_query(['fecha' => $fecha, 'tiempo' => $tiempo]));
         } catch (Throwable $ex) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 pagina('Registrar dietas', function () use ($areas, $tipos, $errores, $valores, $hoy, $fechaMinima) {
     global $CONFIG; ?>
-    <h1>Registrar dietas</h1>
+    <?php encabezado('Registrar dietas', 'Cuántas dietas de cada tipo se pidieron y se entregaron en un área.'); ?>
     <?php if ($errores): ?>
         <div class="aviso aviso-error" role="alert">
             <?php foreach ($errores as $err): ?><div><?= e($err) ?></div><?php endforeach; ?>

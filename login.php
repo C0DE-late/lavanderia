@@ -18,13 +18,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($intentos >= 5 && time() - ($_SESSION['ultimo_intento'] ?? 0) < 60) {
         $error = 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.';
     } else {
-        $st = db()->prepare('SELECT id, nombre, usuario, clave_hash, rol FROM usuarios WHERE usuario = ? AND activo = 1');
+        $st = db()->prepare('SELECT id, nombre, usuario, clave_hash, rol, modulos FROM usuarios WHERE usuario = ? AND activo = 1');
         $st->execute([$usuarioEscrito]);
         $u = $st->fetch();
         if ($u && password_verify($clave, $u['clave_hash'])) {
             session_regenerate_id(true);
             unset($_SESSION['intentos_login'], $_SESSION['ultimo_intento']);
-            $_SESSION['usuario'] = ['id' => (int) $u['id'], 'nombre' => $u['nombre'], 'rol' => $u['rol']];
+            $_SESSION['usuario'] = datosSesion($u);
             redirigir('index.php');
         }
         usleep(400000);

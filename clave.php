@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 pagina('Mi clave', function () use ($errores) { ?>
-    <h1>Cambiar mi clave</h1>
+    <?php encabezado('Cambiar mi clave'); ?>
     <?php if ($errores): ?>
         <div class="aviso aviso-error" role="alert"><?php foreach ($errores as $err): ?><div><?= e($err) ?></div><?php endforeach; ?></div>
     <?php endif; ?>

@@ -3,9 +3,9 @@
  * Reporte para supervisor y administrador: filtros, totales, resumen por área,
  * detalle de registros y descarga en CSV.
  */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/consultas.php';
-exigirRol('supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/ropa.php';
+exigirModulo('ropa', 'supervisor', 'admin');
 
 const LIMITE_PANTALLA = 300;
 
@@ -20,7 +20,7 @@ $consulta = http_build_query($f);
 
 pagina('Reporte', function () use ($f, $resumen, $totales, $detalle, $hayMas, $consulta) {
     global $CONFIG; ?>
-    <h1>Reporte de lavandería</h1>
+    <?php encabezado('Reporte de lavandería', 'Filtra, revisa los totales y descarga los CSV para Excel.'); ?>
 
     <form method="get" class="tarjeta">
         <div class="rejilla">

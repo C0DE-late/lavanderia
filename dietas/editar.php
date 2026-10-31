@@ -1,9 +1,9 @@
 <?php
 /** Corrección o eliminación de una entrega de dietas. */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/permisos.php';
-require __DIR__ . '/app/dietas.php';
-$u = exigirRol();
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/permisos.php';
+require __DIR__ . '/../app/dietas.php';
+$u = exigirModulo('dietas');
 
 // Las reglas de permisos de la ropa sirven igual: usan usuario_id y fecha.
 $entrega = buscarEntrega(leerEntero($_GET['id'] ?? '') ?? 0);
@@ -12,7 +12,7 @@ if (!$entrega || !puedeEditarRegistro($entrega, $u)) {
     redirigir('index.php');
 }
 $esOperario = $u['rol'] === 'operario';
-$volver = $esOperario ? 'mis-registros.php' : 'reporte-dietas.php';
+$volver = $esOperario ? 'mis-registros.php' : 'reporte.php';
 $hoy = date('Y-m-d');
 $fechaMinima = $esOperario ? date('Y-m-d', strtotime('-1 day')) : '2020-01-01';
 
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
     $fecha = leerFecha($v['fecha']);
     $areaId = leerEntero($v['area']);
-    $areasValidas = array_map('intval', array_column(todasLasAreas(), 'id'));
+    $areasValidas = array_map('intval', array_column(todasLasAreasDieta(), 'id'));
 
     if (!$fecha || $fecha > $hoy || $fecha < $fechaMinima) $errores[] = 'La fecha no es válida.';
     if (!isset($CONFIG['tiempos_comida'][$v['tiempo']])) $errores[] = 'Elige el tiempo de comida.';
@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 pagina('Corregir dietas', function () use ($entrega, $tipos, $v, $errores, $esOperario, $volver, $hoy, $fechaMinima) {
     global $CONFIG; ?>
-    <h1>Corregir dietas</h1>
+    <?php encabezado('Corregir dietas'); ?>
     <?php if ($errores): ?>
         <div class="aviso aviso-error" role="alert"><?php foreach ($errores as $err): ?><div><?= e($err) ?></div><?php endforeach; ?></div>
     <?php endif; ?>
@@ -121,7 +121,7 @@ pagina('Corregir dietas', function () use ($entrega, $tipos, $v, $errores, $esOp
                     </select></div>
                 <div class="campo"><label for="area">Área</label>
                     <select id="area" name="area">
-                        <?php foreach (todasLasAreas() as $a): ?>
+                        <?php foreach (todasLasAreasDieta() as $a): ?>
                             <option value="<?= (int) $a['id'] ?>" <?= $v['area'] === (string) $a['id'] ? 'selected' : '' ?>><?= e($a['nombre']) ?></option>
                         <?php endforeach; ?>
                     </select></div>
@@ -137,7 +137,7 @@ pagina('Corregir dietas', function () use ($entrega, $tipos, $v, $errores, $esOp
                 <label for="foto"><?= $entrega['foto'] ? 'Reemplazar foto' : 'Agregar foto' ?></label>
                 <input type="file" id="foto" name="foto" accept="image/*" capture="environment">
                 <?php if ($entrega['foto']): ?>
-                    <img class="miniatura" src="foto.php?dieta=<?= (int) $entrega['id'] ?>" alt="Foto actual del registro">
+                    <img class="miniatura" src="foto.php?id=<?= (int) $entrega['id'] ?>" alt="Foto actual del registro">
                     <label class="fila" style="font-weight:600;margin-top:8px">
                         <input type="checkbox" name="quitar_foto" style="width:auto;min-height:0"> Quitar la foto actual
                     </label>

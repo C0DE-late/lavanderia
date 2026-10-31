@@ -8,7 +8,7 @@ $env = static fn(string $nombre, string $defecto): string => getenv($nombre) !==
 
 return [
     'app' => [
-        'nombre'       => $env('APP_NOMBRE', 'Lavandería'),
+        'nombre'       => $env('APP_NOMBRE', 'Lavandería y Dietas'),
         'institucion'  => $env('APP_INSTITUCION', 'Hospital de Alta Complejidad del Magdalena Centro'),
         'zona_horaria' => 'America/Bogota',
     ],

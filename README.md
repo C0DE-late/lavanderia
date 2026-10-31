@@ -5,23 +5,37 @@ Aplicación web ligera (PHP 8.3 + MySQL 8, sin librerías externas) para registr
 - **Ropa:** la ropa sucia y limpia que se recoge y entrega en cada recorrido.
 - **Dietas:** cuántas dietas de cada tipo se pidieron y cuántas se entregaron en cada tiempo de comida.
 
-Los reportes se exportan a CSV para Excel.
+Cada uno es un **módulo independiente** dentro de la misma app, con su propio menú, panel, reportes y catálogos. Los reportes se exportan a CSV para Excel.
+
+## Módulos
+
+- Al entrar, cada persona ve los módulos que tiene asignados y elige uno. Si tiene un solo módulo, entra directo a él.
+- Dentro de un módulo, el menú lateral (en el celular, la barra inferior y el botón ☰) solo muestra las opciones de ese módulo. Desde el mismo menú se salta al otro módulo.
+- El administrador asigna los módulos de cada usuario en **Usuarios** y entra siempre a todos.
+- Cada módulo tiene **sus propias áreas**: las de lavandería (todas las que entregan ropa) y las de dietas (solo las que tienen pacientes).
+
+| Carpeta | Contenido |
+|---|---|
+| `ropa/` | Módulo de lavandería: panel, registrar, mis registros, reporte, CSV, áreas. |
+| `dietas/` | Módulo de dietas: panel, registrar, mis registros, reporte, CSV, áreas, tipos de dieta. |
+| raíz | Ingreso, selector de módulos, usuarios y cambio de clave. |
+| `app/` | Código compartido: base de datos, sesión, plantilla, permisos y la lógica de cada módulo (`ropa.php`, `dietas.php`). |
 
 ## Roles
 
 | Rol | Puede |
 |---|---|
-| **Operario** | Registrar recorridos de ropa y entregas de dietas. Ver sus registros de los últimos 7 días y corregir los de hoy y ayer. |
-| **Supervisor** | Ver los reportes de ropa y de dietas con filtros, las novedades del día y las fotos; corregir o eliminar registros y descargar los CSV. |
-| **Administrador** | Todo lo del supervisor, más gestionar las áreas, los tipos de dieta y los usuarios. |
+| **Operario** | Registrar en los módulos que tenga asignados. Ver sus registros de los últimos 7 días y corregir los de hoy y ayer. |
+| **Supervisor** | En sus módulos: ver los reportes con filtros, las novedades del día y las fotos; corregir o eliminar registros y descargar los CSV. |
+| **Administrador** | Todo lo del supervisor, más gestionar las áreas de cada módulo, los tipos de dieta y los usuarios con sus módulos. |
 
-## Panel de inicio
+## Panel de cada módulo
 
-Al entrar, todos ven cómo va el día (o el día que elijan):
+Cada módulo abre en su panel, que muestra cómo va el día (o el día que se elija):
 
-- **Ropa:** kg de ropa sucia y limpia, bolsas y, por cada recorrido y tipo de ropa, cuántas áreas van y cuáles faltan.
+- **Lavandería:** kg de ropa sucia y limpia, bolsas y, por cada recorrido y tipo de ropa, cuántas áreas van y cuáles faltan.
 - **Dietas:** pedidas, entregadas, diferencia y cumplimiento; por cada tiempo de comida, cuántas áreas van y cuáles faltan.
-- **Novedades** (supervisor y administrador): las observaciones del día de ropa y de dietas, con enlace al registro.
+- **Novedades** (supervisor y administrador): las observaciones del día del módulo, con enlace al registro.
 
 ## Datos de cada registro de ropa
 
@@ -35,7 +49,7 @@ Fecha · Tiempo de comida (desayuno, media mañana, almuerzo, onces, cena, refri
 
 - Un área se registra una sola vez por tiempo de comida y fecha.
 - Si lo entregado no coincide con lo pedido, las observaciones son obligatorias.
-- Los tipos de dieta (normal, blanda, líquida, hiposódica…) se editan en **Tipos de dieta**. Los tiempos de comida se cambian en `config.php`.
+- Los tipos de dieta (normal, blanda, líquida, hiposódica…) se editan en **Dietas → Tipos de dieta**. Los tiempos de comida se cambian en `config.php`.
 - El **Reporte de dietas** muestra totales por tiempo de comida, por área y por tipo, con la diferencia y el % de cumplimiento, y descarga tres CSV: detalle, por área y por tipo.
 
 ## CSV para Excel
@@ -55,11 +69,11 @@ docker compose up -d --build
 docker compose exec app php instalar/instalar.php   # solo la primera vez
 ```
 
-El instalador crea las tablas, 13 áreas de ejemplo, 12 tipos de dieta de ejemplo y un usuario por rol (`admin`, `supervisor`, `operario`). Las claves de esos usuarios se muestran **una sola vez** en la consola, así que cópialas en ese momento y cámbialas al entrar.
+El instalador crea las tablas, 13 áreas de lavandería, 8 áreas de dietas y 12 tipos de dieta de ejemplo, y un usuario por rol con acceso a los dos módulos (`admin`, `supervisor`, `operario`). Las claves de esos usuarios se muestran **una sola vez** en la consola, así que cópialas en ese momento y cámbialas al entrar.
 
 La app queda en `http://IP-DEL-SERVIDOR:8080`. El puerto se cambia con `PUERTO_APP` en `.env`. La base de datos y las fotos se guardan en los volúmenes `datos` y `fotos`, que sobreviven a reinicios y actualizaciones.
 
-**Actualizar la app:** `docker compose up -d --build`. Los datos no se pierden. Si la versión nueva trae tablas nuevas (por ejemplo, dietas), vuelve a ejecutar el instalador: solo crea lo que falta y no toca los datos ni las claves.
+**Actualizar la app:** `docker compose up -d --build`. Los datos no se pierden. Si la versión nueva trae tablas o columnas nuevas, vuelve a ejecutar el instalador: solo crea lo que falta y no toca los datos ni las claves.
 
 ```bash
 docker compose exec app php instalar/instalar.php
@@ -82,7 +96,7 @@ El botón 📷 usa la cámara del celular mediante el selector de archivos del n
 
 1. Copia la carpeta en `C:\wamp64\www\lavanderia`.
 2. Ejecuta `C:\wamp64\bin\php\php8.3.28\php.exe instalar\instalar.php`.
-3. Abre `http://localhost/lavanderia`.
+3. Abre `http://localhost/lavanderia/`.
 
 ## Configuración
 

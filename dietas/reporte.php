@@ -3,9 +3,9 @@
  * Reporte de dietas para supervisor y administrador: filtros, pedidas frente a
  * entregadas, totales por área, por tipo y por tiempo de comida, detalle y CSV.
  */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/dietas.php';
-exigirRol('supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/dietas.php';
+exigirModulo('dietas', 'supervisor', 'admin');
 
 const LIMITE_PANTALLA = 300;
 
@@ -53,7 +53,7 @@ function tablaResumenDietas(string $titulo, array $filas, array $totales): void
 
 pagina('Reporte de dietas', function () use ($f, $porArea, $porTipo, $porTiempo, $totales, $entregas, $hayMas, $consulta) {
     global $CONFIG; ?>
-    <h1>Reporte de dietas</h1>
+    <?php encabezado('Reporte de dietas', 'Filtra, revisa lo pedido frente a lo entregado y descarga los CSV para Excel.'); ?>
 
     <form method="get" class="tarjeta">
         <div class="rejilla">
@@ -63,7 +63,7 @@ pagina('Reporte de dietas', function () use ($f, $porArea, $porTipo, $porTiempo,
                 <label for="area">Área</label>
                 <select id="area" name="area">
                     <option value="">Todas</option>
-                    <?php foreach (todasLasAreas() as $a): ?>
+                    <?php foreach (todasLasAreasDieta() as $a): ?>
                         <option value="<?= (int) $a['id'] ?>" <?= $f['area'] === (int) $a['id'] ? 'selected' : '' ?>>
                             <?= e($a['nombre']) ?><?= $a['activa'] ? '' : ' (inactiva)' ?>
                         </option>
@@ -102,7 +102,7 @@ pagina('Reporte de dietas', function () use ($f, $porArea, $porTipo, $porTiempo,
         </div>
         <div class="acciones">
             <button class="boton" type="submit">Filtrar</button>
-            <a class="boton boton-secundario" href="reporte-dietas.php">Limpiar</a>
+            <a class="boton boton-secundario" href="reporte.php">Limpiar</a>
         </div>
     </form>
 
@@ -115,9 +115,9 @@ pagina('Reporte de dietas', function () use ($f, $porArea, $porTipo, $porTiempo,
     </div>
 
     <div class="acciones">
-        <a class="boton" href="exportar-dietas.php?formato=detalle&amp;<?= e($consulta) ?>">⬇ CSV detalle</a>
-        <a class="boton boton-secundario" href="exportar-dietas.php?formato=area&amp;<?= e($consulta) ?>">⬇ CSV por área</a>
-        <a class="boton boton-secundario" href="exportar-dietas.php?formato=dieta&amp;<?= e($consulta) ?>">⬇ CSV por tipo</a>
+        <a class="boton" href="exportar.php?formato=detalle&amp;<?= e($consulta) ?>">⬇ CSV detalle</a>
+        <a class="boton boton-secundario" href="exportar.php?formato=area&amp;<?= e($consulta) ?>">⬇ CSV por área</a>
+        <a class="boton boton-secundario" href="exportar.php?formato=dieta&amp;<?= e($consulta) ?>">⬇ CSV por tipo</a>
     </div>
 
     <p class="suave">Del <?= e(fechaCorta($f['desde'])) ?> al <?= e(fechaCorta($f['hasta'])) ?></p>
@@ -152,8 +152,8 @@ pagina('Reporte de dietas', function () use ($f, $porArea, $porTipo, $porTiempo,
                     <td class="num <?= $dif < 0 ? 'negativo' : '' ?>"><?= (int) $d['entregadas'] ?></td>
                     <td><?= e($d['responsable']) ?></td>
                     <td class="texto"><?= e($d['observaciones']) ?></td>
-                    <td><?php if ($d['foto']): ?><a href="foto.php?dieta=<?= (int) $d['id'] ?>" target="_blank">Ver</a><?php endif; ?></td>
-                    <td><a href="editar-dieta.php?id=<?= (int) $d['id'] ?>">Editar</a></td>
+                    <td><?php if ($d['foto']): ?><a href="foto.php?id=<?= (int) $d['id'] ?>" target="_blank">Ver</a><?php endif; ?></td>
+                    <td><a href="editar.php?id=<?= (int) $d['id'] ?>">Editar</a></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

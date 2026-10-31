@@ -32,6 +32,24 @@ function e(?string $texto): string
     return htmlspecialchars($texto ?? '', ENT_QUOTES, 'UTF-8');
 }
 
+/**
+ * Ruta web de un archivo de la app, sin importar si la página está en la raíz o en un módulo.
+ * La app puede estar en la raíz del servidor (Docker) o en una subcarpeta (WAMP: /lavanderia/).
+ */
+function url(string $ruta = ''): string
+{
+    static $base = null;
+    if ($base === null) {
+        $raiz = str_replace('\\', '/', (string) realpath($_SERVER['DOCUMENT_ROOT'] ?? ''));
+        $app = str_replace('\\', '/', (string) realpath(__DIR__ . '/..'));
+        // En Windows la letra de la unidad puede venir en mayúscula o minúscula.
+        $dentro = $raiz !== '' && strncasecmp($app, $raiz, strlen($raiz)) === 0;
+        $base = rtrim($dentro ? substr($app, strlen($raiz)) : '', '/') . '/';
+    }
+    return $base . ltrim($ruta, '/');
+}
+
+/** Redirige a una página; las rutas sin «/» inicial se toman relativas a la página actual. */
 function redirigir(string $url): never
 {
     header('Location: ' . $url);
@@ -70,32 +88,57 @@ function usuarioActual(): ?array
     return $_SESSION['usuario'] ?? null;
 }
 
+/** Datos de sesión de un usuario a partir de su fila en la base. */
+function datosSesion(array $fila): array
+{
+    // El administrador entra a todos los módulos; los demás, a los que tengan asignados.
+    $modulos = $fila['rol'] === 'admin'
+        ? array_keys(MODULOS)
+        : array_values(array_intersect(array_keys(MODULOS), explode(',', (string) $fila['modulos'])));
+    return ['id' => (int) $fila['id'], 'nombre' => $fila['nombre'], 'rol' => $fila['rol'], 'modulos' => $modulos];
+}
+
 /** Exige sesión iniciada y, opcionalmente, uno de los roles indicados. */
 function exigirRol(string ...$roles): array
 {
     $u = usuarioActual();
     if (!$u) {
-        redirigir('login.php');
+        redirigir(url('login.php'));
     }
-    // Refresca nombre y rol desde la base; si la cuenta fue desactivada, cierra la sesión.
-    $st = db()->prepare('SELECT id, nombre, rol FROM usuarios WHERE id = ? AND activo = 1');
+    // Refresca nombre, rol y módulos desde la base; si la cuenta fue desactivada, cierra la sesión.
+    $st = db()->prepare('SELECT id, nombre, rol, modulos FROM usuarios WHERE id = ? AND activo = 1');
     $st->execute([$u['id']]);
     $fila = $st->fetch();
     if (!$fila) {
         $_SESSION = [];
         session_destroy();
-        redirigir('login.php');
+        redirigir(url('login.php'));
     }
-    $u = $_SESSION['usuario'] = ['id' => (int) $fila['id'], 'nombre' => $fila['nombre'], 'rol' => $fila['rol']];
+    $u = $_SESSION['usuario'] = datosSesion($fila);
     if ($roles && !in_array($u['rol'], $roles, true)) {
-        http_response_code(403);
-        pagina('Sin permiso', function () {
-            echo '<div class="tarjeta"><h1>Sin permiso</h1><p>Tu usuario no tiene acceso a esta sección.</p>'
-                . '<a class="boton" href="index.php">Volver al inicio</a></div>';
-        });
-        exit;
+        sinPermiso();
     }
     return $u;
+}
+
+/** Exige acceso al módulo indicado y, opcionalmente, uno de los roles. */
+function exigirModulo(string $modulo, string ...$roles): array
+{
+    $u = exigirRol(...$roles);
+    if (!in_array($modulo, $u['modulos'], true)) {
+        sinPermiso();
+    }
+    return $u;
+}
+
+function sinPermiso(): never
+{
+    http_response_code(403);
+    pagina('Sin permiso', function () {
+        echo '<div class="tarjeta"><h1>Sin permiso</h1><p>Tu usuario no tiene acceso a esta sección.</p>'
+            . '<a class="boton" href="' . e(url('index.php')) . '">Volver al inicio</a></div>';
+    });
+    exit;
 }
 
 function esRol(string ...$roles): bool
@@ -223,16 +266,4 @@ function borrarFoto(?string $nombre): void
     if ($nombre && preg_match('#^\d{4}-\d{2}/[a-f0-9]{24}\.jpg$#', $nombre)) {
         @unlink($CONFIG['dir_fotos'] . '/' . $nombre);
     }
-}
-
-/* ---------- Catálogos ---------- */
-
-function areasActivas(): array
-{
-    return db()->query('SELECT id, nombre FROM areas WHERE activa = 1 ORDER BY orden, nombre')->fetchAll();
-}
-
-function todasLasAreas(): array
-{
-    return db()->query('SELECT id, nombre, activa FROM areas ORDER BY orden, nombre')->fetchAll();
 }

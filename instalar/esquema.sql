@@ -1,6 +1,6 @@
 -- Esquema de la base de datos de Lavandería y Dietas.
 -- Solo crea lo que no existe: se puede volver a ejecutar en una instalación en uso
--- para agregar las tablas nuevas sin tocar los datos.
+-- para agregar las tablas nuevas sin tocar los datos (las columnas nuevas las agrega instalar.php).
 
 CREATE TABLE IF NOT EXISTS usuarios (
     id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -8,10 +8,12 @@ CREATE TABLE IF NOT EXISTS usuarios (
     usuario     VARCHAR(40)  NOT NULL UNIQUE,
     clave_hash  VARCHAR(255) NOT NULL,
     rol         ENUM('operario', 'supervisor', 'admin') NOT NULL DEFAULT 'operario',
+    modulos     SET('ropa', 'dietas') NOT NULL DEFAULT 'ropa,dietas',
     activo      TINYINT(1)   NOT NULL DEFAULT 1,
     creado_en   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Lavandería: áreas que entregan y reciben ropa.
 CREATE TABLE IF NOT EXISTS areas (
     id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre  VARCHAR(100) NOT NULL UNIQUE,
@@ -41,6 +43,14 @@ CREATE TABLE IF NOT EXISTS registros (
     CONSTRAINT fk_registros_editor  FOREIGN KEY (actualizado_por) REFERENCES usuarios (id)
 ) ENGINE=InnoDB;
 
+-- Dietas: áreas propias del módulo (solo las que reciben dietas).
+CREATE TABLE IF NOT EXISTS areas_dieta (
+    id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombre  VARCHAR(100) NOT NULL UNIQUE,
+    orden   INT          NOT NULL DEFAULT 0,
+    activa  TINYINT(1)   NOT NULL DEFAULT 1
+) ENGINE=InnoDB;
+
 -- Dietas: catálogo de tipos (normal, blanda, líquida...).
 CREATE TABLE IF NOT EXISTS tipos_dieta (
     id      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -63,7 +73,7 @@ CREATE TABLE IF NOT EXISTS entregas_dieta (
     actualizado_en   DATETIME      NULL ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uq_entrega (fecha, tiempo, area_id),
     KEY ix_usuario_fecha (usuario_id, fecha),
-    CONSTRAINT fk_entregas_area    FOREIGN KEY (area_id)         REFERENCES areas (id),
+    CONSTRAINT fk_entregas_area    FOREIGN KEY (area_id)         REFERENCES areas_dieta (id),
     CONSTRAINT fk_entregas_usuario FOREIGN KEY (usuario_id)      REFERENCES usuarios (id),
     CONSTRAINT fk_entregas_editor  FOREIGN KEY (actualizado_por) REFERENCES usuarios (id)
 ) ENGINE=InnoDB;

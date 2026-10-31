@@ -1,8 +1,9 @@
 <?php
 /** Corrección o eliminación de un registro. */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/permisos.php';
-$u = exigirRol();
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/ropa.php';
+require __DIR__ . '/../app/permisos.php';
+$u = exigirModulo('ropa');
 
 $registro = buscarRegistro(leerEntero($_GET['id'] ?? '') ?? 0);
 if (!$registro || !puedeEditarRegistro($registro, $u)) {
@@ -84,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 pagina('Corregir registro', function () use ($registro, $v, $errores, $esOperario, $volver, $hoy, $fechaMinima) {
     global $CONFIG; ?>
-    <h1>Corregir registro</h1>
+    <?php encabezado('Corregir registro'); ?>
     <?php if ($errores): ?>
         <div class="aviso aviso-error" role="alert"><?php foreach ($errores as $err): ?><div><?= e($err) ?></div><?php endforeach; ?></div>
     <?php endif; ?>

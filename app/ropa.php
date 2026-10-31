@@ -1,6 +1,25 @@
 <?php
 declare(strict_types=1);
 
+/* Módulo de lavandería: catálogo de áreas y consultas de los registros de ropa. */
+
+function areasActivas(): array
+{
+    return db()->query('SELECT id, nombre FROM areas WHERE activa = 1 ORDER BY orden, nombre')->fetchAll();
+}
+
+function todasLasAreas(): array
+{
+    return db()->query('SELECT id, nombre, activa FROM areas ORDER BY orden, nombre')->fetchAll();
+}
+
+function buscarRegistro(int $id): ?array
+{
+    $st = db()->prepare('SELECT * FROM registros WHERE id = ?');
+    $st->execute([$id]);
+    return $st->fetch() ?: null;
+}
+
 /**
  * Lee los filtros del reporte desde la URL y arma la condición SQL.
  * Lo comparten la pantalla de reporte y la exportación CSV, para que el CSV

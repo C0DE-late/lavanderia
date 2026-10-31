@@ -7,9 +7,9 @@
  * formato=detalle  → un renglón por registro.
  * formato=resumen  → peso total por área y fila de totales.
  */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/consultas.php';
-exigirRol('supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/ropa.php';
+exigirModulo('ropa', 'supervisor', 'admin');
 
 $q = filtrosReporte($_GET);
 $f = $q['filtros'];

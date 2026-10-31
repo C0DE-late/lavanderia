@@ -3,8 +3,9 @@
  * Registro de un recorrido: fecha, recorrido, tipo de ropa y, por cada área,
  * peso en kg, número de bolsas, foto opcional y observaciones.
  */
-require __DIR__ . '/app/bootstrap.php';
-$u = exigirRol('operario', 'supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/ropa.php';
+$u = exigirModulo('ropa');
 
 $hoy = date('Y-m-d');
 // El operario puede registrar hoy o ayer (turnos de noche); supervisor y administrador, cualquier fecha pasada.
@@ -151,7 +152,7 @@ function archivoDeArea(int $id): ?array
 
 pagina('Registrar', function () use ($areas, $errores, $valores, $hoy, $fechaMinima) {
     global $CONFIG; ?>
-    <h1>Registrar recorrido</h1>
+    <?php encabezado('Registrar recorrido', 'Peso y bolsas de ropa de cada área en un recorrido.'); ?>
     <?php if ($errores): ?>
         <div class="aviso aviso-error" role="alert">
             <?php foreach ($errores as $err): ?><div><?= e($err) ?></div><?php endforeach; ?>

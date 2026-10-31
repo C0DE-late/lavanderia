@@ -6,9 +6,9 @@
  * formato=area    → totales por área.
  * formato=dieta   → totales por tipo de dieta.
  */
-require __DIR__ . '/app/bootstrap.php';
-require __DIR__ . '/app/dietas.php';
-exigirRol('supervisor', 'admin');
+require __DIR__ . '/../app/bootstrap.php';
+require __DIR__ . '/../app/dietas.php';
+exigirModulo('dietas', 'supervisor', 'admin');
 
 $q = filtrosDietas($_GET);
 $f = $q['filtros'];

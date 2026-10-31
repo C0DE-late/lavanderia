@@ -9,6 +9,21 @@
     if (mensaje && !window.confirm(mensaje)) ev.preventDefault();
   });
 
+  // Menú lateral desplegable en el celular.
+  var lateral = document.getElementById('lateral');
+  var velo = document.getElementById('velo');
+  var abrir = document.getElementById('abrir-menu');
+  function menu(abierto) {
+    document.body.classList.toggle('menu-abierto', abierto);
+    velo.hidden = !abierto;
+    abrir.setAttribute('aria-expanded', String(abierto));
+  }
+  if (lateral && abrir) {
+    abrir.addEventListener('click', function () { menu(true); });
+    velo.addEventListener('click', function () { menu(false); });
+    document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') menu(false); });
+  }
+
   var form = document.getElementById('form-registro');
   if (!form) return;
 
@@ -167,7 +182,7 @@
     var tiempo = form.querySelector('input[name=tiempo]:checked');
     var area = form.area.value;
     if (!fecha || !tiempo || !area) { avisoRegistrada.classList.add('oculto'); return; }
-    fetch('registrar-dieta.php?existentes=1&fecha=' + encodeURIComponent(fecha) + '&tiempo=' + encodeURIComponent(tiempo.value),
+    fetch('registrar.php?existentes=1&fecha=' + encodeURIComponent(fecha) + '&tiempo=' + encodeURIComponent(tiempo.value),
       { credentials: 'same-origin' })
       .then(function (r) { return r.ok ? r.json() : []; })
       .then(function (ids) { avisoRegistrada.classList.toggle('oculto', ids.indexOf(Number(area)) === -1); })

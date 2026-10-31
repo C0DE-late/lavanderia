@@ -2,10 +2,20 @@
 declare(strict_types=1);
 
 /**
- * Consultas del módulo de dietas. Una entrega es lo que llega a un área en un
+ * Módulo de dietas: catálogos (áreas propias y tipos de dieta) y consultas. Una entrega es lo que llega a un área en un
  * tiempo de comida de un día; su detalle dice cuántas dietas de cada tipo se
  * pidieron y cuántas se entregaron.
  */
+
+function areasDietaActivas(): array
+{
+    return db()->query('SELECT id, nombre FROM areas_dieta WHERE activa = 1 ORDER BY orden, nombre')->fetchAll();
+}
+
+function todasLasAreasDieta(): array
+{
+    return db()->query('SELECT id, nombre, activa FROM areas_dieta ORDER BY orden, nombre')->fetchAll();
+}
 
 function tiposDietaActivos(): array
 {
@@ -130,7 +140,7 @@ function filtrosDietas(array $get, ?int $soloUsuario = null): array
 const DIETAS_DESDE = 'FROM entregas_dieta e
     JOIN entregas_dieta_detalle d ON d.entrega_id = e.id
     JOIN tipos_dieta t ON t.id = d.tipo_dieta_id
-    JOIN areas a ON a.id = e.area_id
+    JOIN areas_dieta a ON a.id = e.area_id
     JOIN usuarios u ON u.id = e.usuario_id';
 
 /** Una fila por entrega, con el total pedido y entregado (del tipo filtrado, si hay filtro). */

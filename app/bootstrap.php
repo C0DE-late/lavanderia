@@ -14,6 +14,11 @@ const ROLES = [
     'admin'      => 'Administrador',
 ];
 const TIPOS = ['sucia' => 'Sucia', 'limpia' => 'Limpia'];
+// Módulos de la app: cada uno vive en su carpeta (ropa/, dietas/) con su menú y su panel.
+const MODULOS = [
+    'ropa'   => ['nombre' => 'Lavandería', 'icono' => 'assets/ropa.svg',   'descripcion' => 'Ropa sucia y limpia por área y recorrido.'],
+    'dietas' => ['nombre' => 'Dietas',     'icono' => 'assets/dietas.svg', 'descripcion' => 'Dietas pedidas y entregadas por área y tiempo de comida.'],
+];
 
 // Sesión con cookie protegida.
 if (session_status() !== PHP_SESSION_ACTIVE && PHP_SAPI !== 'cli') {
