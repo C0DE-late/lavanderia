@@ -152,3 +152,32 @@ tr:last-child td { border-bottom: 0; }
   .area-campos .boton-foto { grid-column: span 2; }
   .quien { display: none; }
 }
+
+/* Dietas: tabla con cantidades pedidas y entregadas */
+.tabla-dietas td { vertical-align: middle; }
+.tabla-dietas input { width: 5.5em; min-height: 44px; text-align: right; }
+.tabla-dietas .fila { justify-content: flex-end; gap: 6px; }
+.tabla-dietas .copiar { min-height: 44px; min-width: 44px; padding: 0; }
+.tabla-dietas tr.con-datos td:first-child { font-weight: 800; color: var(--marca); }
+.negativo { color: var(--peligro); }
+.positivo { color: var(--exito); }
+
+/* Panel de inicio */
+.panel-seccion { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.estado { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.estado-pares { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.estado-item { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 12px; }
+.estado-item strong { display: block; }
+.estado-item .barra { height: 8px; border-radius: 999px; background: var(--fondo); margin: 8px 0 6px; overflow: hidden; }
+.estado-item .barra span { display: block; height: 100%; background: var(--acento); }
+.pendientes { font-size: .85rem; color: var(--suave); }
+.etiqueta-alerta { background: var(--alerta-suave); color: var(--texto); }
+@media (max-width: 480px) {
+  /* En el celular la tabla de dietas cabe sin desplazarse: la diferencia se ve en el total. */
+  .tabla-dietas th, .tabla-dietas td { padding: 8px 5px; }
+  .tabla-dietas th { white-space: normal; }
+  .tabla-dietas td.texto { min-width: 0; }
+  .tabla-dietas input { width: 3.3em; padding: 8px 6px; }
+  .tabla-dietas .copiar { min-width: 38px; }
+  .tabla-dietas th:last-child, .tabla-dietas .diferencia { display: none; }
+}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Instalador: crea la base de datos, las tablas, las áreas de ejemplo y un usuario por rol.
+ * Instalador: crea la base de datos, las tablas, las áreas y tipos de dieta de ejemplo y un usuario por rol.
  * Uso (desde la consola):  php instalar/instalar.php
  * Solo crea lo que no existe; no borra datos.
  */
@@ -32,6 +32,17 @@ foreach ($areas as $i => $nombre) {
     $insArea->execute([$nombre, ($i + 1) * 10]);
 }
 echo count($areas) . " áreas de ejemplo verificadas.\n";
+
+// Tipos de dieta de ejemplo: edítalos desde la sección Tipos de dieta del administrador.
+$tiposDieta = [
+    'Normal', 'Blanda', 'Líquida clara', 'Líquida completa', 'Hiposódica', 'Hipoglúcida (diabético)',
+    'Hipograsa', 'Hiperproteica', 'Renal', 'Licuada', 'Pediátrica', 'Fórmula infantil',
+];
+$insTipo = $pdo->prepare('INSERT IGNORE INTO tipos_dieta (nombre, orden) VALUES (?, ?)');
+foreach ($tiposDieta as $i => $nombre) {
+    $insTipo->execute([$nombre, ($i + 1) * 10]);
+}
+echo count($tiposDieta) . " tipos de dieta de ejemplo verificados.\n";
 
 // Un usuario inicial por rol, con clave aleatoria que se muestra una sola vez.
 $usuarios = [

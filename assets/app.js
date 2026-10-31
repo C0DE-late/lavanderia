@@ -115,3 +115,80 @@
     botonGuardar.textContent = 'Guardando…';
   });
 })();
+
+// Formulario de dietas: totales en vivo, botón «=» y aviso de área ya registrada.
+(function () {
+  'use strict';
+
+  var form = document.getElementById('form-dieta');
+  if (!form) return;
+
+  var totalDietas = document.getElementById('total-dietas');
+  var botonGuardar = document.getElementById('boton-guardar');
+  var avisoRegistrada = document.getElementById('aviso-registrada');
+
+  function entero(texto) {
+    var n = parseInt(texto, 10);
+    return isFinite(n) && n > 0 ? n : 0;
+  }
+
+  function recalcular() {
+    var pedidas = 0, entregadas = 0;
+    form.querySelectorAll('.dieta-fila').forEach(function (fila) {
+      var p = entero(fila.querySelector('.pedidas').value);
+      var e = entero(fila.querySelector('.entregadas').value);
+      var dif = e - p;
+      pedidas += p;
+      entregadas += e;
+      var celda = fila.querySelector('.diferencia');
+      celda.textContent = dif > 0 ? '+' + dif : String(dif);
+      celda.classList.toggle('negativo', dif < 0);
+      celda.classList.toggle('positivo', dif > 0);
+      fila.classList.toggle('con-datos', p > 0 || e > 0);
+    });
+    totalDietas.textContent = pedidas + ' / ' + entregadas;
+    totalDietas.classList.toggle('negativo', pedidas !== entregadas);
+  }
+  form.addEventListener('input', recalcular);
+  recalcular();
+
+  form.querySelectorAll('.copiar').forEach(function (boton) {
+    boton.addEventListener('click', function () {
+      var fila = boton.closest('.dieta-fila');
+      fila.querySelector('.entregadas').value = fila.querySelector('.pedidas').value;
+      recalcular();
+    });
+  });
+
+  // Solo en el registro nuevo: avisa si el área ya tiene entrega en ese tiempo de comida.
+  function marcarRegistrada() {
+    if (!avisoRegistrada) return;
+    var fecha = form.fecha.value;
+    var tiempo = form.querySelector('input[name=tiempo]:checked');
+    var area = form.area.value;
+    if (!fecha || !tiempo || !area) { avisoRegistrada.classList.add('oculto'); return; }
+    fetch('registrar-dieta.php?existentes=1&fecha=' + encodeURIComponent(fecha) + '&tiempo=' + encodeURIComponent(tiempo.value),
+      { credentials: 'same-origin' })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (ids) { avisoRegistrada.classList.toggle('oculto', ids.indexOf(Number(area)) === -1); })
+      .catch(function () { /* sin conexión: el servidor valida al guardar */ });
+  }
+  form.addEventListener('change', function (ev) {
+    if (ev.target.name === 'fecha' || ev.target.name === 'tiempo' || ev.target.name === 'area') marcarRegistrada();
+  });
+  marcarRegistrada();
+
+  // Evita doble envío (después de la confirmación de «Eliminar», si la hay).
+  form.addEventListener('submit', function (ev) {
+    if (avisoRegistrada && !form.querySelector('input[name=tiempo]:checked')) {
+      ev.preventDefault();
+      alert('Elige el tiempo de comida.');
+      return;
+    }
+    setTimeout(function () {
+      if (ev.defaultPrevented) return;
+      botonGuardar.disabled = true;
+      botonGuardar.textContent = 'Guardando…';
+    }, 0);
+  });
+})();

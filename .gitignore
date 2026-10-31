@@ -1,4 +1,5 @@
 .env
 almacen/
-*.sql
+# Respaldos en la raíz; el esquema de instalar/ sí se versiona.
+/*.sql
 *.tgz
