@@ -1,13 +1,15 @@
 /* Lavandería — estilos ligeros, pensados primero para celular. */
 :root {
-  --fondo: #f3f6fa;
+  /* Colores del Hospital de Alta Complejidad del Magdalena Centro: azul #017FD3 y verde #02E45C del logo. */
+  --fondo: #f2f7fc;
   --superficie: #ffffff;
-  --texto: #14243a;
-  --suave: #55667d;
-  --borde: #d5dfeb;
-  --marca: #0b4f9c;
-  --marca-suave: #e6f0fb;
-  --acento: #1fb5a8;
+  --texto: #10263d;
+  --suave: #52677e;
+  --borde: #d3e2ef;
+  --marca: #0072bc;
+  --marca-suave: #e2f1fc;
+  --acento: #02c552;
+  --degradado: linear-gradient(90deg, #017fd3, #02e45c);
   --exito: #17703f;
   --exito-suave: #e3f5ea;
   --peligro: #b3261e;
@@ -18,13 +20,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fondo: #0d1726;
-    --superficie: #152238;
-    --texto: #e8eef6;
-    --suave: #a6b4c6;
-    --borde: #2a3c58;
-    --marca: #6aa9ee;
-    --marca-suave: #1b3150;
+    --fondo: #0a1724;
+    --superficie: #11243a;
+    --texto: #e7f0f8;
+    --suave: #a3b6c9;
+    --borde: #24405c;
+    --marca: #4fb3f6;
+    --marca-suave: #12334f;
+    --acento: #3ee07f;
     --exito: #6fd39b;
     --exito-suave: #173628;
     --peligro: #ff8a80;
@@ -54,8 +57,10 @@ main.contenedor { padding-top: 16px; padding-bottom: 48px; }
 
 /* Encabezado y menú */
 .encabezado { background: var(--superficie); border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 10; }
+.encabezado::before { content: ""; display: block; height: 4px; background: var(--degradado); }
 .encabezado .fila { min-height: 56px; }
 .marca { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.1rem; text-decoration: none; color: var(--texto); }
+.marca img { border-radius: 8px; }
 .quien { margin-left: auto; font-size: .85rem; color: var(--suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .salir { margin: 0; }
 .menu { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
@@ -101,6 +106,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--marca); outline:
 .opciones label {
   margin: 0; min-height: 52px; display: flex; align-items: center; justify-content: center;
   border: 2px solid var(--borde); border-radius: 12px; background: var(--superficie); cursor: pointer; font-size: 1.05rem;
+  text-align: center; padding: 4px 6px; line-height: 1.2;
 }
 .opciones input:checked + label { border-color: var(--marca); background: var(--marca-suave); color: var(--marca); }
 .opciones input:focus-visible + label { outline: 3px solid var(--acento); outline-offset: 2px; }
@@ -138,7 +144,7 @@ tr:last-child td { border-bottom: 0; }
 
 /* Indicadores del reporte */
 .indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
-.indicador { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 12px; }
+.indicador { background: var(--superficie); border: 1px solid var(--borde); border-left: 4px solid var(--marca); border-radius: var(--radio); padding: 12px; }
 .indicador span { display: block; font-size: .8rem; color: var(--suave); font-weight: 700; }
 .indicador strong { font-size: 1.35rem; }
 .acciones { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
@@ -146,6 +152,7 @@ tr:last-child td { border-bottom: 0; }
 /* Inicio de sesión */
 .login { max-width: 380px; margin: 8vh auto 0; }
 .login .marca { justify-content: center; font-size: 1.4rem; margin-bottom: 16px; }
+.login .logo { display: block; width: min(260px, 80%); height: auto; margin: 0 auto 16px; border-radius: var(--radio); }
 
 @media (max-width: 420px) {
   .area-campos { grid-template-columns: 1fr 1fr; }
@@ -169,7 +176,7 @@ tr:last-child td { border-bottom: 0; }
 .estado-item { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 12px; }
 .estado-item strong { display: block; }
 .estado-item .barra { height: 8px; border-radius: 999px; background: var(--fondo); margin: 8px 0 6px; overflow: hidden; }
-.estado-item .barra span { display: block; height: 100%; background: var(--acento); }
+.estado-item .barra span { display: block; height: 100%; background: var(--degradado); }
 .pendientes { font-size: .85rem; color: var(--suave); }
 .etiqueta-alerta { background: var(--alerta-suave); color: var(--texto); }
 @media (max-width: 480px) {

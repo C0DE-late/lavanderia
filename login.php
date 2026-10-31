@@ -37,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 pagina('Ingresar', function () use ($error, $usuarioEscrito) {
     global $CONFIG; ?>
     <div class="login">
-        <div class="marca"><img src="assets/icono.svg" alt="" width="44" height="44"><?= e($CONFIG['app']['nombre']) ?></div>
+        <img class="logo" src="assets/logo.jpg" alt="<?= e($CONFIG['app']['institucion']) ?>" width="482" height="390">
         <form method="post" class="tarjeta">
             <h1>Ingresar</h1>
-            <p class="suave"><?= e($CONFIG['app']['institucion']) ?></p>
+            <p class="suave"><?= e($CONFIG['app']['nombre']) ?></p>
             <?php if ($error): ?><div class="aviso aviso-error" role="alert"><?= e($error) ?></div><?php endif; ?>
             <?= campoCsrf() ?>
             <div class="campo">

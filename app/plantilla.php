@@ -35,16 +35,17 @@ function pagina(string $titulo, callable $contenido): void
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0B4F9C">
+    <meta name="theme-color" content="#0072BC">
     <title><?= e($titulo) ?> · <?= e($CONFIG['app']['nombre']) ?></title>
-    <link rel="icon" href="assets/icono.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="assets/estilos.css?v=3">
+    <link rel="icon" href="assets/icono.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/icono.png">
+    <link rel="stylesheet" href="assets/estilos.css?v=4">
 </head>
 <body>
 <header class="encabezado">
     <div class="contenedor fila">
         <a class="marca" href="index.php">
-            <img src="assets/icono.svg" alt="" width="34" height="34">
+            <img src="assets/icono.png" alt="" width="34" height="34">
             <span><?= e($CONFIG['app']['nombre']) ?></span>
         </a>
         <?php if ($u): ?>
